@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "194753042220",
+    "firebase_url": "https://hostelmatesapp-default-rtdb.firebaseio.com",
+    "project_id": "hostelmatesapp",
+    "storage_bucket": "hostelmatesapp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:194753042220:android:af90984ef83306b315fe89",
+        "android_client_info": {
+          "package_name": "com.example.hostelmatesapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "194753042220-k1vsq39k0cc383vhr6kgihl7itpiff74.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.hostelmatesapp",
+            "certificate_hash": "60756097078928e5d04dff52d69cfa432c7394a8"
+          }
+        },
+        {
+          "client_id": "194753042220-3hkp7o2rit0c29p1vuuu45g9c1vdddbq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDuiz9lsnqVOVPZ7weg_Wj0FqGqtskj5bY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "194753042220-3hkp7o2rit0c29p1vuuu45g9c1vdddbq.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "194753042220-ljmd60ad2tgcc3q8dbtds3li4eth1nof.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.project"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
