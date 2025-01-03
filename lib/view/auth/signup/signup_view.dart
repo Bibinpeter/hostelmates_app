@@ -95,7 +95,9 @@ class SignupView extends StatelessWidget {
                   ),
                   const SizedBox(height: 100),
                   ElevatedButton(
-                    onPressed: controller.signup,
+                    onPressed:(){
+                      controller.signup();
+                    } ,
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.white,
                       backgroundColor: Colors.white.withOpacity(0.2),

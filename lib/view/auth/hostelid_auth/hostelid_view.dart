@@ -9,7 +9,7 @@ class HostelidView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-  final HostelidController controller = Get.find();
+  final HostelidController hostelidController = Get.find();
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,
@@ -58,7 +58,7 @@ class HostelidView extends StatelessWidget {
                   const SizedBox(height: 180),
                   CustomText_FormField(
                     label: "please enter your hostel-id",
-                    controller: controller.hostelIdController,
+                    controller: hostelidController.hostelIdController,
                     type: TextInputType.text,
                     prefixIcon: Icons.password_rounded,
                     hintText: "Enter Hostel ID.",
@@ -66,7 +66,8 @@ class HostelidView extends StatelessWidget {
                   const SizedBox(height: 150),
                   ElevatedButton(
                     onPressed: () async {
-                      await controller.verifyHostelId(context);
+                      await
+                       hostelidController.verifyHostelId(context);
                     },
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.white,

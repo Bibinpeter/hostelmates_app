@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:project/routes/routes.dart';
-import 'package:project/service/authservice/emailauth/authentication.dart';
+import 'package:project/service/emailauth/authentication.dart';
 
 class SignupController extends GetxController {
    var   firstNameController = TextEditingController();
@@ -9,15 +9,15 @@ class SignupController extends GetxController {
    var   passwordController = TextEditingController();
    final EmailAuthMethod _authMethod = EmailAuthMethod();
 
-   var isLoading = false.obs;
-
+   var isLoading = false.obs; 
+   var firstName = "".obs;    
    Future<void> signup() async {
-    final firstName = firstNameController.text.trim();
+      final enteredFirstName = firstNameController.text.trim();
     final email = emailController.text.trim();
     final password = passwordController.text.trim();
-
+ 
     // Validate inputs
-    if (firstName.isEmpty || email.isEmpty || password.isEmpty) {
+    if (enteredFirstName.isEmpty || email.isEmpty || password.isEmpty) {
       Get.snackbar(
         'Error',
         'Please fill all fields',
@@ -29,14 +29,19 @@ class SignupController extends GetxController {
 
     try {
       isLoading(true);  
+      print("Before updating: ${firstName.value}");
+firstName.value = enteredFirstName;
+print("After updating: ${firstName.value}");
       String res = await _authMethod.signupUser(
-        name: firstName,
+        name: enteredFirstName,
         email: email,
         password: password,
       );
-
+    
       if (res == "success") {
         isLoading(false);
+        print("firstName--------------------$firstName");
+
         Get.snackbar(
           'Success',
           'Signup successful',

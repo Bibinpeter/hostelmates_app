@@ -10,6 +10,7 @@ class AuthBinding implements Bindings {
     Get.lazyPut<HostelidController>(() => HostelidController());
     Get.lazyPut<LoginController>(() => LoginController());
     Get.lazyPut<SignupController>(() => SignupController());
+     Get.lazyPut<HostelidController>(() => HostelidController());
 
   }
 }

@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:project/routes/routes.dart';
-import 'package:project/service/authservice/emailauth/authentication.dart';
+import 'package:project/service/emailauth/authentication.dart';
 import 'package:project/service/authservice/googleauth/google_auth.dart';
 
 class LoginController extends GetxController {

@@ -1,7 +1,6 @@
 import 'package:get/get.dart';
 
 class HomeController extends GetxController {
-  // Reactive greeting message
   final greetingMessage = "".obs;
 
   @override

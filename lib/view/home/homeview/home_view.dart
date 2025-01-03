@@ -4,33 +4,36 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:icons_plus/icons_plus.dart';
-import 'package:project/service/authservice/emailauth/authentication.dart';
+import 'package:project/routes/routes.dart';
+import 'package:project/service/emailauth/authentication.dart';
 import 'package:project/view/auth/hostelid_auth/hotelid_controller.dart';
-import 'package:project/view/home/components/header_widget.dart';
-import 'package:project/view/home/components/hostel_card.dart';
-import 'package:project/view/home/homeview/home_controller.dart';
+import 'package:project/view/home/homecontroller/home_controller.dart';
+import 'package:project/widgets/headerwidget/header_widget.dart';
+import 'package:project/widgets/hoste_cardd.dart/hostel_card.dart';
 
 class HomeView extends StatelessWidget {
   HomeView({super.key});
   final EmailAuthMethod emailAuth = EmailAuthMethod();
   final FirebaseAuth fireAuth = FirebaseAuth.instance;
-
+  final HomeController homeController = Get.find();
+   final HostelidController hostelidController = Get.put(HostelidController());
+   
   @override
   Widget build(BuildContext context) {
-    final HomeController homeController = Get.find();
-    final HostelidController hostelidController = Get.find();
+    hostelidController.loadHostelDataFromPrefs();
     return Obx(() {
       return Scaffold(
-        body: Column( 
+        backgroundColor: Colors.white,
+        body: Column(
           children: [
-            Header(Fireauth: fireAuth, homeController: homeController),
+            FadeInDownBig(child: Header(Fireauth: fireAuth, homeController: homeController,  )),
             const SizedBox(height: 30),
             Stack(
               children: [
-                hosteldetails(
-                  place: hostelidController.place,
-                  accomodation: hostelidController.accomodation,
-                  highlights: hostelidController.highlights,
+                hosteldetails( 
+                 place: hostelidController.place.value,   
+                  accomodation: hostelidController.accomodation.value,   
+                  highlights: hostelidController.highlights.value,   
                 ),
                 Positioned(
                   top: 5,
@@ -70,7 +73,7 @@ class HomeView extends StatelessWidget {
     });
   }
 
-  Widget _FeatureContainer() {
+ Widget _FeatureContainer() {
   return Expanded(
     child: Stack(
       children: [
@@ -110,7 +113,7 @@ class HomeView extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                 GridView.builder(
+                GridView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -120,7 +123,7 @@ class HomeView extends StatelessWidget {
                   ),
                   itemCount: 9,
                   itemBuilder: (context, index) {
-                     final icons = [
+                    final icons = [
                       IonIcons.chatbox_ellipses,
                       IonIcons.accessibility,
                       ZondIcons.notifications,
@@ -130,9 +133,9 @@ class HomeView extends StatelessWidget {
                       IonIcons.bus,
                       IonIcons.settings,
                       IonIcons.person,
-                    ];  
+                    ];
 
-                    final texts = [ 
+                    final texts = [
                       'Notify them\n',
                       'Rules',
                       'Notification',
@@ -142,26 +145,43 @@ class HomeView extends StatelessWidget {
                       'Ksrtc Booking',
                       'Settings',
                       'Profile',
-                      
                     ];
 
-                     void onTap(int index) {
-                      print("Tapped on: ${texts[index]}");
-                     }
+                    void onTap(int index) {
+                      final routes = [
+                        AppRoutes.notifyview,
+                        AppRoutes.rulesView,
+                        AppRoutes.notificationsView,
+                        AppRoutes.foodMenuView,
+                        AppRoutes.announcementsView,
+                        AppRoutes.paymentView,
+                        AppRoutes.ksrtcBookingView,
+                        AppRoutes.settingsView,
+                        AppRoutes.profileView,
+                      ];
+
+                      final data = {
+                        'title': texts[index]??"",
+                        'icon': icons[index],
+                        'additionalData': 'Some data specific to ${texts[index]}'
+                      };
+
+                      Get.toNamed(routes[index],);
+                    }
 
                     return GestureDetector(
-                      onTap: () => onTap(index),  
+                      onTap: () => onTap(index),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(
-                            icons[index], 
+                            icons[index],
                             size: 30,
                             color: Colors.white,
                           ),
-                          const SizedBox(height: 8),  
+                          const SizedBox(height: 8),
                           Text(
-                            texts[index], 
+                            texts[index],
                             style: GoogleFonts.poppins(
                               color: Colors.white,
                               fontSize: 12,
@@ -188,5 +208,4 @@ class HomeView extends StatelessWidget {
     ),
   );
 }
-
 }

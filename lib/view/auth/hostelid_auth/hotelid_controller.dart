@@ -2,96 +2,90 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:project/routes/routes.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HostelidController extends GetxController {
   var hostelIdController = TextEditingController();
   var firestore = FirebaseFirestore.instance;
-  var isLoading = false.obs;
+
   RxString verifiedHostelId = "".obs;
   RxString place = "".obs;
   RxString name = "".obs;
-  RxString accomodation = "".obs; // Use "accomodation" consistently.
+  RxString accomodation = "".obs;
   RxString highlights = "".obs;
-
-  // Fetch arguments and initialize variables
-  void fetchArguments() {
-    final arguments = Get.arguments;
-    print("arguments: $arguments");
-    if (arguments != null) {
-      verifiedHostelId.value = arguments['hostelId'] ?? '';
-      place.value = arguments['place'] ?? 'No place available';
-      name.value = arguments['name'] ?? 'No name available';
-      accomodation.value = arguments['accomodation'] ?? 'will update soon'; // Consistent key name
-      highlights.value = arguments['highlights'] ?? 'No highlights available';
-    }
-  }
-
-  // Function to verify the hostel ID
-  Future<void> verifyHostelId(BuildContext context) async {
-    final String hostelId = hostelIdController.text.trim();
-
-    if (hostelId.isEmpty) {
-      Get.snackbar(
-        "Error",
-        "Please enter a hostel ID",
-        snackPosition: SnackPosition.TOP,
-        colorText: Colors.red,
-      );
-      return;
-    }
-
-    try {
-      isLoading.value = true;
-
-      // Fetch document from Firestore
-      final DocumentSnapshot doc = await firestore.collection('Hostels').doc(hostelId).get();
-
-      if (doc.exists) {
-        // Update values based on document data
-        verifiedHostelId.value = hostelId;
-        place.value = doc['place'] ?? 'No place available';
-        name.value = doc['name'] ?? 'No name available';
-        accomodation.value = doc['accomodation'] ?? 'will update sn'; // Consistent key name
-        highlights.value = doc['highlights'] ?? 'No highlights available';
-
-        // Navigate to the home view with arguments
-        Get.offNamed(AppRoutes.HomeView, arguments: {
-          'hostelId': hostelId,
-          'place': place.value,
-          'name': name.value,
-          'accomodation': accomodation.value, // Consistent key name
-          'highlights': highlights.value,
-        });
-      } else {
-        Get.snackbar(
-          "Error",
-          "Invalid Hostel ID",
-          snackPosition: SnackPosition.TOP,
-          colorText: Colors.red,
-        );
-      }
-    } catch (e) {
-      Get.snackbar(
-        "Error",
-        "Failed to verify Hostel ID: $e",
-        snackPosition: SnackPosition.TOP,
-        colorText: Colors.red,
-      );
-    } finally {
-      isLoading.value = false;
-      hostelIdController.clear();
-    }
-  }
 
   @override
   void onInit() {
     super.onInit();
-    fetchArguments();
+    loadHostelDataFromPrefs();  
   }
 
   @override
   void onClose() {
     hostelIdController.dispose();
     super.onClose();
+  }
+
+  // Load hostel data from SharedPreferences
+  Future<void> loadHostelDataFromPrefs() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    place.value = prefs.getString('place') ?? "";
+    name.value = prefs.getString('name') ?? "";
+    accomodation.value = prefs.getString('accomodation') ?? "";
+    highlights.value = prefs.getString('highlights') ?? "";
+  }
+
+  /// Verifies the hostel ID by fetching data from Firestore and stores it persistently
+  Future<void> verifyHostelId(BuildContext context) async {
+    final String hostelId = hostelIdController.text.trim();
+
+    if (hostelId.isEmpty) {
+      _showError("Please enter a hostel ID");
+      return;
+    }
+
+    try {
+      final DocumentSnapshot doc =
+          await firestore.collection('Hostels').doc(hostelId).get();
+
+      if (doc.exists) {
+        // Extract data from Firestore
+        place.value = doc['place'] ?? "";
+        name.value = doc['name'] ?? "";
+        accomodation.value = doc['accomodation'] ?? "";
+        highlights.value = doc['highlights'] ?? "";
+        await _saveToSharedPrefs();
+
+        verifiedHostelId.value = hostelId;
+
+        Get.offNamed(AppRoutes.HomeView);
+      } else {
+        _showError("Invalid Hostel ID");
+      }
+    } catch (e) {
+      _showError("Failed to verify Hostel ID: $e");
+    } finally {
+      hostelIdController.clear(); // Clear the text field
+    }
+  }
+
+ 
+  Future<void> _saveToSharedPrefs() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('place', place.value);
+    await prefs.setString('name', name.value);
+    await prefs.setString('accomodation', accomodation.value);
+    await prefs.setString('highlights', highlights.value);
+    await prefs.setString('verifiedHostelId', verifiedHostelId.value);
+  }
+
+ 
+  void _showError(String message) {
+    Get.snackbar(
+      "Error",
+      message,
+      snackPosition: SnackPosition.TOP,
+      colorText: Colors.red,
+    );
   }
 }
