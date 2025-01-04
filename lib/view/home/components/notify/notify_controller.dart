@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:project/view/auth/hostelid_auth/hotelid_controller.dart';
+import 'package:project/view/auth/signup/signup_controller.dart';
 
 class NotifyController extends GetxController
     with GetSingleTickerProviderStateMixin {
@@ -15,10 +17,10 @@ class NotifyController extends GetxController
   final TextEditingController leaveToController = TextEditingController();
 
   // Food Notification Controllers
-  final TextEditingController foodroomNumberController =
-      TextEditingController();
+  final TextEditingController foodroomNumberController = TextEditingController();
   final TextEditingController dateselect = TextEditingController();
   final RxString selectedMeal = 'Breakfast'.obs;
+   final SignupController signupController =Get.put(SignupController());
 
   @override
   void onInit() {
@@ -49,11 +51,12 @@ class NotifyController extends GetxController
     }
   }
 
-  Future<void> sendLeaveNotification(String hostelId) async {
+  Future<void> sendLeaveNotification( ) async {
+    String? hostelId = await HostelidController().getVerifiedHostelId();
     String roomNumber = roomNumberController.text.trim();
     String leaveFrom = leaveFromController.text.trim();
     String leaveTo = leaveToController.text.trim();
-   String userName = FirebaseAuth.instance.currentUser?.displayName ?? 'Unknown User';
+   String userName = FirebaseAuth.instance.currentUser?.displayName ?? signupController.firstName.value;
     if (roomNumber.isEmpty || leaveFrom.isEmpty || leaveTo.isEmpty) {
       Get.snackbar(
         "Error",
@@ -72,8 +75,7 @@ class NotifyController extends GetxController
       print("Leave To: $leaveTo");
       print("name:$userName");
       await firestore
-          .collection('Hostels')
-          .doc(hostelId)
+          .collection('Hostels') .doc(hostelId)
           .collection('LeaveNotifications')
           .add({
         'roomNumber': roomNumber,
@@ -99,11 +101,13 @@ class NotifyController extends GetxController
     }
   }
 
-  Future<void> sendFoodNotification(String hostelId) async {
+  Future<void> sendFoodNotification( ) async {
+    String? hostelId = await HostelidController().getVerifiedHostelId();
+
     String roomNumber = foodroomNumberController.text.trim();
     String meal = selectedMeal.value;
     String date = dateselect.text.trim();
-    String userName = FirebaseAuth.instance.currentUser?.displayName ?? 'Unknown User';
+    String userName = FirebaseAuth.instance.currentUser?.displayName ??  signupController.firstName.value;
 
     if (roomNumber.isEmpty || date.isEmpty) {
       Get.snackbar( 
@@ -121,6 +125,7 @@ class NotifyController extends GetxController
       print("Room Number: $roomNumber");
       print("Meal: $meal");
       print("Date: $date");
+      print("name:$userName");
       await firestore
           .collection('Hostels')
           .doc(hostelId)  

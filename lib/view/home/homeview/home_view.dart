@@ -21,12 +21,13 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     hostelidController.loadHostelDataFromPrefs();
+
     return Obx(() {
       return Scaffold(
         backgroundColor: Colors.white,
         body: Column(
           children: [
-            FadeInDownBig(child: Header(Fireauth: fireAuth, homeController: homeController,  )),
+            FadeInDownBig(child: Header(Fireauth: fireAuth, homeController: homeController,)),
             const SizedBox(height: 30),
             Stack(
               children: [

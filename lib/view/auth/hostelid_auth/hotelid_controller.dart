@@ -18,6 +18,7 @@ class HostelidController extends GetxController {
   void onInit() {
     super.onInit();
     loadHostelDataFromPrefs();  
+    getVerifiedHostelId();
   }
 
   @override
@@ -25,6 +26,13 @@ class HostelidController extends GetxController {
     hostelIdController.dispose();
     super.onClose();
   }
+
+
+  Future<String?> getVerifiedHostelId() async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.getString('verifiedHostelId');
+}
+
 
   // Load hostel data from SharedPreferences
   Future<void> loadHostelDataFromPrefs() async {
@@ -54,9 +62,10 @@ class HostelidController extends GetxController {
         name.value = doc['name'] ?? "";
         accomodation.value = doc['accomodation'] ?? "";
         highlights.value = doc['highlights'] ?? "";
+        verifiedHostelId.value = hostelId;
         await _saveToSharedPrefs();
 
-        verifiedHostelId.value = hostelId;
+        
 
         Get.offNamed(AppRoutes.HomeView);
       } else {
@@ -77,6 +86,7 @@ class HostelidController extends GetxController {
     await prefs.setString('accomodation', accomodation.value);
     await prefs.setString('highlights', highlights.value);
     await prefs.setString('verifiedHostelId', verifiedHostelId.value);
+    print("hostelid here;;;;;;;;;;;;;;;;;;;;;;;${verifiedHostelId.value.toString()}");
   }
 
  

@@ -8,7 +8,7 @@ import 'notify_controller.dart';
 
 class NotifyView extends StatelessWidget {
   final NotifyController notifyController = Get.put(NotifyController());
-    final HostelidController hostelidController = Get.put(HostelidController());
+  final HostelidController hostelidController = Get.put(HostelidController());
 
   NotifyView({super.key});
 
@@ -89,8 +89,7 @@ class NotifyView extends StatelessWidget {
                     borderSide: const BorderSide(color: Colors.blue, width: 2),
                   ),
                   suffixIcon: IconButton(
-                    icon: const Icon(Icons.date_range,
-                    color: Colors.white),
+                    icon: const Icon(Icons.date_range, color: Colors.white),
                     onPressed: () => notifyController
                         .pickDate(notifyController.leaveFromController),
                   ),
@@ -113,11 +112,13 @@ class NotifyView extends StatelessWidget {
                     borderSide: const BorderSide(color: Colors.blue, width: 2),
                   ),
                   suffixIcon: IconButton(
-                    icon: const Icon(Icons.calendar_month,color: Colors.white,),
+                    icon: const Icon(
+                      Icons.calendar_month,
+                      color: Colors.white,
+                    ),
                     onPressed: () => notifyController
                         .pickDate(notifyController.leaveToController),
                   ),
-                  
                 ),
               ),
             ),
@@ -125,7 +126,7 @@ class NotifyView extends StatelessWidget {
             Center(
               child: ElevatedButton(
                 onPressed: () {
-                  notifyController.sendLeaveNotification(hostelidController.verifiedHostelId.toString());
+                  notifyController.sendLeaveNotification();
                 },
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
@@ -224,9 +225,7 @@ class NotifyView extends StatelessWidget {
                     borderSide: const BorderSide(color: Colors.blue, width: 2),
                   ),
                   suffixIcon: IconButton(
-                    icon: const Icon(Icons.calendar_month,
-                    color: Colors.white
-                    ),
+                    icon: const Icon(Icons.calendar_month, color: Colors.white),
                     onPressed: () =>
                         notifyController.pickDate(notifyController.dateselect),
                   ),
@@ -237,7 +236,7 @@ class NotifyView extends StatelessWidget {
             Center(
               child: ElevatedButton(
                 onPressed: () {
-                  notifyController.sendFoodNotification(hostelidController.verifiedHostelId.toString());
+                  notifyController.sendFoodNotification();
                 },
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
