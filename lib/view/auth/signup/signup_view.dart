@@ -39,7 +39,7 @@ class SignupView extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(top: 20),
+                    padding: const EdgeInsets.only(top: 30),
                     child: ClipOval(
                       child: Image.asset(
                         'assets/images/hostelLogo.jpg',
@@ -66,7 +66,7 @@ class SignupView extends StatelessWidget {
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 180),
+                  const SizedBox(height: 170),
                   FadeInDown( 
                     child: CustomText_FormField(
                       controller: controller.firstNameController,
@@ -111,7 +111,7 @@ class SignupView extends StatelessWidget {
                       style: TextStyle(letterSpacing: 2),
                     ),
                   ),
-                  const SizedBox(height: 90),
+                  const SizedBox(height: 70),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [

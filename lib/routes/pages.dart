@@ -8,10 +8,10 @@ import 'package:project/view/auth/signup/signup_view.dart';
 import 'package:project/view/auth/splah/splash_view.dart';
 import 'package:project/view/home/components/announcement/ann_view.dart';
 import 'package:project/view/home/components/foodmenu/foodmenu_view.dart';
+import 'package:project/view/home/components/history/history_view.dart';
 import 'package:project/view/home/components/ksrtc/ksrtc_view.dart';
 import 'package:project/view/home/components/notification/notification_view.dart';
 import 'package:project/view/home/components/notify/notify_view.dart';
-import 'package:project/view/home/components/payment/payment_view.dart';
 import 'package:project/view/home/components/profile/profile_view.dart';
 import 'package:project/view/home/components/rules/rules_view.dart';
 import 'package:project/view/home/components/settings/settings.dart';
@@ -85,8 +85,8 @@ class AppPages {
         transition: Transition.rightToLeftWithFade,
         binding: HomeBinding()),
     GetPage(
-        name: AppRoutes.paymentView,
-        page: () => PaymentView(),
+        name: AppRoutes.history,
+        page: () => HistoryView(),
         transition: Transition.rightToLeftWithFade,
         binding: HomeBinding()),
     GetPage(

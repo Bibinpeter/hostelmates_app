@@ -21,6 +21,7 @@ class NotifyController extends GetxController
   final TextEditingController dateselect = TextEditingController();
   final RxString selectedMeal = 'Breakfast'.obs;
    final SignupController signupController =Get.put(SignupController());
+    final user = FirebaseAuth.instance.currentUser;
 
   @override
   void onInit() {
@@ -56,6 +57,8 @@ class NotifyController extends GetxController
     String roomNumber = roomNumberController.text.trim();
     String leaveFrom = leaveFromController.text.trim();
     String leaveTo = leaveToController.text.trim();
+    String uid = user?.uid??"";
+
    String userName = FirebaseAuth.instance.currentUser?.displayName ?? signupController.firstName.value;
     if (roomNumber.isEmpty || leaveFrom.isEmpty || leaveTo.isEmpty) {
       Get.snackbar(
@@ -74,10 +77,12 @@ class NotifyController extends GetxController
       print("Leave From: $leaveFrom");
       print("Leave To: $leaveTo");
       print("name:$userName");
+       print("uid:$uid");
       await firestore
           .collection('Hostels') .doc(hostelId)
           .collection('LeaveNotifications')
           .add({
+            'uid':uid,
         'roomNumber': roomNumber,
         'leaveFrom': leaveFrom,
         'leaveTo': leaveTo,
@@ -108,6 +113,7 @@ class NotifyController extends GetxController
     String meal = selectedMeal.value;
     String date = dateselect.text.trim();
     String userName = FirebaseAuth.instance.currentUser?.displayName ??  signupController.firstName.value;
+        String uid = user?.uid??"";
 
     if (roomNumber.isEmpty || date.isEmpty) {
       Get.snackbar( 
@@ -126,11 +132,14 @@ class NotifyController extends GetxController
       print("Meal: $meal");
       print("Date: $date");
       print("name:$userName");
+     print("uid:$uid");
+
       await firestore
           .collection('Hostels')
           .doc(hostelId)  
           .collection('FoodNotifications')
           .add({
+            'uid':uid,
         'roomNumber': roomNumber,
         'meal': meal,
         'date': date,

@@ -11,7 +11,7 @@ class AppRoutes {
   static const String notificationsView = '/notificationsView';
   static const String foodMenuView = '/foodMenuView';
   static const String announcementsView = '/announcementsView';
-  static const String paymentView = '/paymentView';
+  static const String history = '/history';
   static const String ksrtcBookingView = '/ksrtcBookingView';
   static const String settingsView = '/settingsView';
   static const String profileView = '/profileView';

@@ -69,7 +69,7 @@ class LoginView extends StatelessWidget {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(
-                    height: 200,
+                    height: 180,
                   ),
                   FadeInDown(
                     child:  

@@ -5,6 +5,7 @@ import 'package:project/service/emailauth/authentication.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SignupController extends GetxController {
+  // final UserController userController = Get.put(UserController());
   var firstNameController = TextEditingController();
   var emailController = TextEditingController();
   var passwordController = TextEditingController();
@@ -28,71 +29,75 @@ class SignupController extends GetxController {
     }
   }
 
-  Future<void> signup() async {
-    final enteredFirstName = firstNameController.text.trim();
-    final email = emailController.text.trim();
-    final password = passwordController.text.trim();
+ Future<void> signup() async {
+  final enteredFirstName = firstNameController.text.trim();
+  final email = emailController.text.trim();
+  final password = passwordController.text.trim();
 
-    // Validate inputs
-    if (enteredFirstName.isEmpty || email.isEmpty || password.isEmpty) {
+  // Validate inputs
+  if (enteredFirstName.isEmpty || email.isEmpty || password.isEmpty) {
+    Get.snackbar(
+      'Error',
+      'Please fill all fields',
+      colorText: Colors.red,
+      snackPosition: SnackPosition.TOP,
+    );
+    return;
+  }
+
+  try {
+    isLoading(true);
+
+    // Update first name observable
+    firstName.value = enteredFirstName;
+
+    // Signup the user and get the user ID
+    String userId = await _authMethod.signupUser(
+      name: enteredFirstName,
+      email: email,
+      password: password,
+    );
+
+    if (userId.isNotEmpty) {
+      isLoading(false);
+
+      // Save user ID in UserController
+     // userController.setUserId(userId);
+      print("Userid_in signupcontroller:::::::::::::::::::::$userId");
+      // Save first name to SharedPreferences
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('firstName', enteredFirstName);
+
+      // Display success message
       Get.snackbar(
-        'Error',
-        'Please fill all fields',
-        colorText: Colors.red,
+        'Success',
+        'Signup successful',
+        backgroundColor: Colors.black.withOpacity(0.3),
+        colorText: Colors.green,
         snackPosition: SnackPosition.TOP,
       );
-      return;
-    }
 
-    try {
-      isLoading(true);
-
-      // Update first name observable
-      firstName.value = enteredFirstName;
-
-      // Signup the user
-      String res = await _authMethod.signupUser(
-        name: enteredFirstName,
-        email: email,
-        password: password,
-      );
-
-      if (res == "success") {
-        isLoading(false);
-
-        // Save first name to SharedPreferences
-        final SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString('firstName', enteredFirstName);
-
-        // Display success message
-        Get.snackbar(
-          'Success',
-          'Signup successful',
-          colorText: Colors.green,
-          snackPosition: SnackPosition.TOP,
-        );
-
-        // Navigate to next screen
-        Get.offNamed(AppRoutes.Hotelid);
-      } else {
-        isLoading(false);
-        Get.snackbar(
-          'Error',
-          res,
-          colorText: Colors.red,
-          snackPosition: SnackPosition.BOTTOM,
-        );
-      }
-    } catch (e) {
+      // Navigate to next screen
+      Get.offNamed(AppRoutes.Hotelid);
+    } else {
       isLoading(false);
       Get.snackbar(
         'Error',
-        'Signup failed: $e',
+        'Signup failed: Unable to retrieve user ID',
         colorText: Colors.red,
         snackPosition: SnackPosition.BOTTOM,
       );
     }
+  } catch (e) {
+    isLoading(false);
+    Get.snackbar(
+      'Error',
+      'Signup failed: $e',
+      colorText: Colors.red,
+      snackPosition: SnackPosition.BOTTOM,
+    );
   }
+}
 
   @override
   void onClose() {

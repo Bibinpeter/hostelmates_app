@@ -4,10 +4,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:project/routes/routes.dart';
-import 'package:project/service/emailauth/authentication.dart';
 import 'package:project/service/authservice/googleauth/google_auth.dart';
+import 'package:project/service/emailauth/authentication.dart';
 
 class LoginController extends GetxController {
+   // final UserController userController = Get.put(UserController());
+
   var isLoading = false.obs;
   var isPhoneLoading = false.obs;
   var verificationId = ''.obs;
@@ -20,72 +22,109 @@ class LoginController extends GetxController {
   final GoogleAuth _googleAuth = GoogleAuth();
 
   // Function to login with email and password
-  Future<void> EmailLogin() async {
-    final email = emailController.text.trim();
-    final password = passwordController.text.trim();
+ Future<void> EmailLogin() async {
+  final email = emailController.text.trim();
+  final password = passwordController.text.trim();
 
-    if (email.isEmpty || password.isEmpty) {
+  if (email.isEmpty || password.isEmpty) {
+    Get.snackbar(
+      "Error",
+      "Please fill all fields",
+      colorText: Colors.red,
+      snackPosition: SnackPosition.TOP,
+    );
+    return;
+  }
+
+  try {
+    isLoading(true);
+
+    // Attempt login and get user ID or response
+    String userId = await _authMethod.loginUser(email: email, password: password);
+
+    if (userId.isNotEmpty) {
+      isLoading(false);
+
+      // Set the user ID in the controller
+     // userController.setUserId(userId);
+
+      // Display success message
       Get.snackbar(
-        "Error",
-        "Please fill all fields",
-        colorText: Colors.red,
+        "Success",
+        "Login successful",
+        colorText: Colors.green,
         snackPosition: SnackPosition.TOP,
       );
-      return;
-    }
 
-    try {
-      isLoading(true);
-      String res =
-          await _authMethod.loginUser(email: email, password: password);
-
-      if (res == "success") {
-        isLoading(false);
-        Get.snackbar(
-          "Success",
-          "Login successful",
-          colorText: Colors.green,
-          snackPosition: SnackPosition.TOP,
-        );
-        Get.offNamed(AppRoutes.Hotelid);
-      } else {
-        isLoading(false);
-        Get.snackbar(
-          "Error",
-          res,
-          snackPosition: SnackPosition.TOP,
-          colorText: Colors.red,
-        );
-      }
-    } catch (e) {
+      // Navigate to the next screen
+      Get.offNamed(AppRoutes.Hotelid);
+    } else {
       isLoading(false);
       Get.snackbar(
         "Error",
-        "Login failed: $e",
+        "Login failed: Invalid credentials",
         snackPosition: SnackPosition.TOP,
         colorText: Colors.red,
       );
-    } finally {
-      emailController.clear();
-      passwordController.clear();
     }
+  } catch (e) {
+    isLoading(false);
+    Get.snackbar(
+      "Error",
+      "Login failed: $e",
+      snackPosition: SnackPosition.TOP,
+      colorText: Colors.red,
+    );
+  } finally {
+    emailController.clear();
+    passwordController.clear();
   }
+}
+
 
   // Function to sign in with Google
-  Future<void> signInWithGoogle() async {
-    try {
-      await _googleAuth.signInWithGoogle();
+ Future<void> signInWithGoogle() async {
+  try {
+    // Perform Google Sign-In and get user details
+    final user = await _googleAuth.signInWithGoogle();
+
+    if (user != null) {
+      // Retrieve the user ID
+      final userId = user.uid;
+
+      // Set the user ID in the UserController
+     // userController.setUserId(userId);
+
+      // Navigate to the next screen
       Get.offNamed(AppRoutes.Hotelid);
-    } catch (e) {
+
+      // Optional: Display a success message
+      Get.snackbar(
+        "Success",
+        "Google Sign-In successful",
+        colorText: Colors.green,
+        snackPosition: SnackPosition.TOP,
+      );
+    } else {
       Get.snackbar(
         "Error",
-        "Failed to sign in: $e",
+        "Google Sign-In failed: No user information retrieved",
         duration: const Duration(seconds: 15),
         colorText: Colors.red,
         snackPosition: SnackPosition.TOP,
       );
     }
+  } catch (e) {
+    Get.snackbar(
+      "Error",
+      "Failed to sign in: $e",
+      duration: const Duration(seconds: 15),
+      colorText: Colors.red,
+      snackPosition: SnackPosition.TOP,
+    );
   }
+}
+
 
   // Function to log out of Google account
   Future<void> googleSignOut() async {
