@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:project/routes/routes.dart';
-import 'package:project/service/emailauth/authentication.dart';
+import 'package:project/service/authservice/emailauth/email_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SignupController extends GetxController {

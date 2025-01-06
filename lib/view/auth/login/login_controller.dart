@@ -4,9 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:project/routes/routes.dart';
-import 'package:project/service/authservice/googleauth/google_auth.dart';
-import 'package:project/service/emailauth/authentication.dart';
-
+import 'package:project/service/authservice/emailauth/email_auth.dart';
+ 
 class LoginController extends GetxController {
    // final UserController userController = Get.put(UserController());
 
@@ -19,129 +18,71 @@ class LoginController extends GetxController {
   var phoneController = TextEditingController();
   final FirebaseAuth auth = FirebaseAuth.instance;
   final EmailAuthMethod _authMethod = EmailAuthMethod();
-  final GoogleAuth _googleAuth = GoogleAuth();
 
   // Function to login with email and password
  Future<void> EmailLogin() async {
-  final email = emailController.text.trim();
-  final password = passwordController.text.trim();
+    final email = emailController.text.trim();
+    final password = passwordController.text.trim();
 
-  if (email.isEmpty || password.isEmpty) {
-    Get.snackbar(
-      "Error",
-      "Please fill all fields",
-      colorText: Colors.red,
-      snackPosition: SnackPosition.TOP,
-    );
-    return;
-  }
-
-  try {
-    isLoading(true);
-
-    // Attempt login and get user ID or response
-    String userId = await _authMethod.loginUser(email: email, password: password);
-
-    if (userId.isNotEmpty) {
-      isLoading(false);
-
-      // Set the user ID in the controller
-     // userController.setUserId(userId);
-
-      // Display success message
+    if (email.isEmpty || password.isEmpty) {
       Get.snackbar(
-        "Success",
-        "Login successful",
-        colorText: Colors.green,
+        "Error",
+        "Please fill all fields",
+        colorText: Colors.red,
         snackPosition: SnackPosition.TOP,
       );
+      return;
+    }
 
-      // Navigate to the next screen
-      Get.offNamed(AppRoutes.Hotelid);
-    } else {
+    try {
+      isLoading(true);
+
+      // Attempt login using Firebase Auth method
+      await _authMethod.loginUser(email: email, password: password);
+
+      // Check if the current user is authenticated
+      User? user = FirebaseAuth.instance.currentUser;
+
+      if (user != null && user.email == email) {
+        isLoading(false);
+
+        // Display success message
+        Get.snackbar(
+          "SUCCESS",
+          "Login successful",
+          icon: const Icon(Icons.thumb_up_sharp,color: Colors.green,),
+          colorText: Colors.green,
+          snackPosition: SnackPosition.TOP,
+        );
+
+        // Navigate to the next screen after successful login
+        Get.offNamed(AppRoutes.Hotelid);
+      } else {
+        isLoading(false);
+        Get.snackbar(
+          "Error",
+          "Login failed: Invalid credentials",
+          snackPosition: SnackPosition.TOP,
+          colorText: Colors.red,
+        );
+      }
+    } catch (e) {
       isLoading(false);
       Get.snackbar(
         "Error",
-        "Login failed: Invalid credentials",
+        "Login failed: $e",
         snackPosition: SnackPosition.TOP,
         colorText: Colors.red,
       );
+    } finally {
+      emailController.clear(); 
+      passwordController.clear();
     }
-  } catch (e) {
-    isLoading(false);
-    Get.snackbar(
-      "Error",
-      "Login failed: $e",
-      snackPosition: SnackPosition.TOP,
-      colorText: Colors.red,
-    );
-  } finally {
-    emailController.clear();
-    passwordController.clear();
   }
-}
-
 
   // Function to sign in with Google
- Future<void> signInWithGoogle() async {
-  try {
-    // Perform Google Sign-In and get user details
-    final user = await _googleAuth.signInWithGoogle();
+  
 
-    if (user != null) {
-      // Retrieve the user ID
-      final userId = user.uid;
-
-      // Set the user ID in the UserController
-     // userController.setUserId(userId);
-
-      // Navigate to the next screen
-      Get.offNamed(AppRoutes.Hotelid);
-
-      // Optional: Display a success message
-      Get.snackbar(
-        "Success",
-        "Google Sign-In successful",
-        colorText: Colors.green,
-        snackPosition: SnackPosition.TOP,
-      );
-    } else {
-      Get.snackbar(
-        "Error",
-        "Google Sign-In failed: No user information retrieved",
-        duration: const Duration(seconds: 15),
-        colorText: Colors.red,
-        snackPosition: SnackPosition.TOP,
-      );
-    }
-  } catch (e) {
-    Get.snackbar(
-      "Error",
-      "Failed to sign in: $e",
-      duration: const Duration(seconds: 15),
-      colorText: Colors.red,
-      snackPosition: SnackPosition.TOP,
-    );
-  }
-}
-
-
-  // Function to log out of Google account
-  Future<void> googleSignOut() async {
-    try {
-      await _googleAuth.googleSignOut();
-      Get.snackbar("Success", "Logged out successfully!",
-          snackPosition: SnackPosition.TOP);
-      Get.offNamed(AppRoutes.LogIn);
-    } catch (e) {
-      Get.snackbar(
-        "Error",
-        "Failed to sign out: $e",
-        colorText: Colors.red,
-        snackPosition: SnackPosition.TOP,
-      );
-    }
-  }
 
   // Function to send password reset email
   Future<void> sendPasswordResetEmail(BuildContext context) async {
@@ -162,7 +103,7 @@ class LoginController extends GetxController {
       Get.snackbar(
         "Success",
         "Password reset email sent! Check your inbox.",
-        snackPosition: SnackPosition.TOP,
+        snackPosition: SnackPosition.BOTTOM,
         colorText: Colors.green,
       );
     } catch (e) {

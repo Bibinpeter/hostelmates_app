@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:project/routes/routes.dart';
-import 'package:project/service/emailauth/authentication.dart';
+import 'package:project/service/authservice/emailauth/email_auth.dart';
 import 'package:project/view/auth/hostelid_auth/hotelid_controller.dart';
 import 'package:project/view/home/homecontroller/home_controller.dart';
 import 'package:project/widgets/headerwidget/header_widget.dart';

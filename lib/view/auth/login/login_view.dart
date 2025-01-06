@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:project/routes/routes.dart';
+import 'package:project/service/authservice/googleauth/google_auth.dart';
 import 'package:project/view/auth/login/login_controller.dart';
 import 'package:project/widgets/customtextfield/customtextfield.dart';
 
@@ -14,6 +15,7 @@ class LoginView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
       final LoginController loginController = Get.find();
+      final GoogleAuth _googleAuth=GoogleAuth();
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,
@@ -162,7 +164,7 @@ class LoginView extends StatelessWidget {
                     children: [ 
                       FadeInLeft(child: GestureDetector(  
                         onTap: () {
-                          loginController.signInWithGoogle(); 
+                          _googleAuth.signInWithGoogle();
                         },
                         child: Brand(Brands.google))),
 
